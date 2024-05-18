@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	let media: Blob[] = [];
+    import VideoStream from "$lib/components/VideoStream.svelte";
+    let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
     let recording = false;
 
@@ -14,7 +15,8 @@
 		const data = await response.json();
 		console.log(data);
 	};
-
+    let volume: number = 0;
+    let webcam: Webcam;
 	onMount(async () => {
 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 		mediaRecorder = new MediaRecorder(stream);
@@ -27,14 +29,38 @@
 			}
             sendFile(new File([blob], "audio.ogg"));
         };
+        const audioContext = new AudioContext();
+        const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
+        const analyserNode = audioContext.createAnalyser();
+        mediaStreamAudioSourceNode.connect(analyserNode);
+
+        const pcmData = new Float32Array(analyserNode.fftSize);
+        const onFrame = () => {
+            analyserNode.getFloatTimeDomainData(pcmData);
+            let sumSquares = 0.0;
+            for (const amplitude of pcmData) { sumSquares += amplitude*amplitude; }
+            volume = Math.sqrt(sumSquares / pcmData.length);
+            window.requestAnimationFrame(onFrame);
+        };
+        window.requestAnimationFrame(onFrame);
+
+        const webcamElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('canvas');
+        const snapSoundElement = document.getElementById('snapSound');
+        webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement);
+        webcam.start();
 	});
+
 	const startRecording = () => {
+        let img = webcam.snap();
 		media = [];
 		mediaRecorder?.start();
 	};
 	const stopRecording = () => {
 		mediaRecorder?.stop();
 	};
+
+
 </script>
 
 
@@ -52,6 +78,7 @@
         <li class="c-rainbow__layer c-rainbow__layer--green">MOAN TO SPEECH</li>
         <li class="c-rainbow__layer c-rainbow__layer--yellow">MOAN TO SPEECH</li>
     </ul>
+    <VideoStream/>
     <div class="pt-12">
         {#if recording}
             <button class="btn variant-filled" on:click={stopRecording}>Stop</button>
@@ -59,6 +86,8 @@
             <button class="btn variant-filled" on:click={startRecording}>Record</button>
         {/if}
     </div>
+    <meter id="volumeMeter" high={0.25} max={1} value={volume}></meter>
+
 </div>
 
 <style>
