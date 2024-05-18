@@ -37,44 +37,36 @@
         );
     }
 
-    async function stopStream() {
-        function clearphoto() {
-            const context = canvasRef.getContext("2d") as CanvasRenderingContext2D;
-            context.fillStyle = "#AAA";
-            context.fillRect(0, 0, canvasRef.width, canvasRef.height);
-        }
-
-        function takepicture() {
-            const context = canvasRef.getContext("2d") as CanvasRenderingContext2D;
-            if (width && height) {
-                canvasRef.width = width;
-                canvasRef.height = height;
-                context.drawImage(videoRef, 0, 0, width, height);
-                videoRef.classList.add('hidden');
-
-                const base64Url = canvasRef.toDataURL("image/png");
-                const request = async () => {
-                    const data = new FormData();
-                    data.append('image', base64Url);
-                    const response = await fetch(apiurl, {
-                        method: 'GET',
-                        body: data
-                    });
-                    invalidateAll();
-                };
-                request();
-            } else {
-                clearphoto();
-            }
-            close();
-        }
-
-        takepicture();
-
-        stream.getTracks().forEach(track => track.stop());
-        videoRef.srcObject = null;
+    function clearphoto() {
+        const context = canvasRef.getContext("2d") as CanvasRenderingContext2D;
+        context.fillStyle = "#AAA";
+        context.fillRect(0, 0, canvasRef.width, canvasRef.height);
     }
 
+    export function takepicture() {
+        const context = canvasRef.getContext("2d") as CanvasRenderingContext2D;
+        if (width && height) {
+            canvasRef.width = width;
+            canvasRef.height = height;
+            context.drawImage(videoRef, 0, 0, width, height);
+            videoRef.classList.add('hidden');
+
+            const base64Url = canvasRef.toDataURL("image/png");
+            const request = async () => {
+                const data = new FormData();
+                data.append('image', base64Url);
+                const response = await fetch(apiurl, {
+                    method: 'GET',
+                    body: data
+                });
+                invalidateAll();
+            };
+            request();
+        } else {
+            clearphoto();
+        }
+        close();
+    }
     onMount(() => {
         getStream();
     });
@@ -82,10 +74,6 @@
 
 </script>
 
-<section class="container mx-auto px-4">
-    <!-- <button class="rounded-sm bg-slate-600 text-white px-4 py-2" on:click={getStream}>Start Stream</button> -->
-    <button class="rounded-sm bg-red-600 text-white px-4 py-2" on:click={stopStream}>Take</button>
-    <video class="mt-4 rounded-sm bg-white" width="640" height="480" autoplay={true} bind:this={videoRef} />
-    <canvas id="canvas" class="d-none" bind:this={canvasRef}></canvas>
-
-</section>
+<!-- <button class="rounded-sm bg-slate-600 text-white px-4 py-2" on:click={getStream}>Start Stream</button> -->
+<video class="rounded-sm bg-white" width="640" height="480" autoplay={true} bind:this={videoRef} />
+<canvas id="canvas" class="d-none h-0 w-0" bind:this={canvasRef}></canvas>

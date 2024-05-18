@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import VideoStream from "$lib/components/VideoStream.svelte";
 
+	let camera: VideoStream;
 	let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
 	let recording = false;
@@ -51,6 +52,7 @@
 	const startRecording = () => {
 		media = [];
 		mediaRecorder?.start();
+		camera.takepicture();
 		recording = true;
 	};
 	const stopRecording = () => {
@@ -82,28 +84,30 @@
 	-->
 	<h1 class="text-6xl text-center gradient-heading font-extrabold">MOAN TO SPEECH</h1>
 </div>
-<div class="p-12 flex flex-col items-center">
-	<h1 class="minecraft">test</h1>
-	<div class="pt-12" />
-	{#if recording}
-        <button
-                id="record-button"
-                class="transition stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-red-600"
-                style="--stacks: 3;" on:click={stopRecording}>
-            <span class="py=8" style="--index: 0;">Stop</span>
-            <span class="py-8" style="--index: 1;">Stop</span>
-            <span class="py-8" style="--index: 2;">Stop</span>
-        </button>
-	{:else}
-		<button
-			class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
-			style="--stacks: 3; margin-top: 20px; margin-bottom:20px" on:click={startRecording}>
-			<span class="py=8" style="--index: 0;">Record</span>
-			<span class="py-8" style="--index: 1;">Record</span>
-			<span class="py-8" style="--index: 2;">Record</span>
-		</button>
-	{/if}
-	<VideoStream />
+<div class="p-12 flex flex-row items-center justify-between">
+	<div class="border-green-700 border-8">
+		<VideoStream bind:this={camera}/>
+	</div>
+	<div class="flex justify-center w-[40%]">
+		{#if recording}
+			<button
+					id="record-button"
+					class="transition stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-red-600"
+					style="--stacks: 3;" on:click={stopRecording}>
+				<span class="py=8" style="--index: 0;">Stop</span>
+				<span class="py-8" style="--index: 1;">Stop</span>
+				<span class="py-8" style="--index: 2;">Stop</span>
+			</button>
+		{:else}
+			<button
+				class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
+				style="--stacks: 3; margin-top: 20px; margin-bottom:20px" on:click={startRecording}>
+				<span class="py=8" style="--index: 0;">Record</span>
+				<span class="py-8" style="--index: 1;">Record</span>
+				<span class="py-8" style="--index: 2;">Record</span>
+			</button>
+		{/if}
+	</div>
 </div>
 
 <style>
