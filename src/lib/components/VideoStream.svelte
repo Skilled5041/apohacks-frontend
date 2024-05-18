@@ -85,7 +85,7 @@
 <section class="container mx-auto px-4">
     <!-- <button class="rounded-sm bg-slate-600 text-white px-4 py-2" on:click={getStream}>Start Stream</button> -->
     <button class="rounded-sm bg-red-600 text-white px-4 py-2" on:click={stopStream}>Take</button>
-    <video class="mt-4 rounded-sm " width="640" height="480" autoplay={true} bind:this={videoRef} />
+    <video class="mt-4 rounded-sm bg-white" width="640" height="480" autoplay={true} bind:this={videoRef} />
     <canvas id="canvas" class="d-none" bind:this={canvasRef}></canvas>
 
 </section>

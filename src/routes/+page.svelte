@@ -75,6 +75,9 @@
 </div>
 <div class="p-12 flex flex-col items-center">
 	<h1 class="minecraft">test</h1>
+	<div>
+		<VideoStream />
+	</div>
 	<div class="pt-12" />
 	{#if recording}
 		<div class="rounded-3xl" style="border-color:red; border-style:solid; border-radius: 1.5rem; margin-top: {20-volume*200}px; margin-bottom: {20-volume*200}px; border-width: {volume*200}px;">
@@ -95,7 +98,7 @@
 			<span class="py-8" style="--index: 2;">Record</span>
 		</button>
 	{/if}
-	<VideoStream />
+
 </div>
 
 <style>
