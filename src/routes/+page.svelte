@@ -25,7 +25,7 @@
 	const sendFile = async (file: File) => {
 		const formData = new FormData();
 		formData.append("file", file);
-		const response = await fetch("http://localhost:3000/upload", {
+		const response = await fetch("http://localhost:8000/upload_audio/", {
 			method: "POST",
 			body: formData
 		});
