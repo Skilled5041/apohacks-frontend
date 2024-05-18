@@ -59,11 +59,8 @@
 	};
 </script>
 
-<div class="p-12">
-	<br>
-	<br>
-	<br>
-	<br>
+<div class="p-12 flex w-full justify-center">
+	<!--
 	<ul class="c-rainbow">
 		<li class="c-rainbow__layer c-rainbow__layer--white">MOAN TO SPEECH</li>
 		<li class="c-rainbow__layer c-rainbow__layer--orange">MOAN TO SPEECH</li>
@@ -73,28 +70,31 @@
 		<li class="c-rainbow__layer c-rainbow__layer--green">MOAN TO SPEECH</li>
 		<li class="c-rainbow__layer c-rainbow__layer--yellow">MOAN TO SPEECH</li>
 	</ul>
+	-->
+	<h1 class="text-6xl text-center gradient-heading font-extrabold">MOAN TO SPEECH</h1>
 </div>
 <div class="p-12 flex flex-col items-center">
 	<h1 class="minecraft">test</h1>
 	<div class="pt-12" />
 	{#if recording}
-		<button
-			class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
-			style="--stacks: 3;" on:click={stopRecording}>
-			<span class="py=8" style="--index: 0;">Stop</span>
-			<span class="py-8" style="--index: 1;">Stop</span>
-			<span class="py-8" style="--index: 2;">Stop</span>
-		</button>
+		<div class="rounded-3xl" style="border-color:red; border-style:solid; border-radius: 1.5rem; margin-top: {20-volume*200}px; margin-bottom: {20-volume*200}px; border-width: {volume*200}px;">
+			<button
+				class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
+				style="--stacks: 3;" on:click={stopRecording}>
+				<span class="py=8" style="--index: 0;">Stop</span>
+				<span class="py-8" style="--index: 1;">Stop</span>
+				<span class="py-8" style="--index: 2;">Stop</span>
+			</button>
+		</div>
 	{:else}
 		<button
 			class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
-			style="--stacks: 3;" on:click={startRecording}>
+			style="--stacks: 3; margin-top: 20px; margin-bottom:20px" on:click={startRecording}>
 			<span class="py=8" style="--index: 0;">Record</span>
 			<span class="py-8" style="--index: 1;">Record</span>
 			<span class="py-8" style="--index: 2;">Record</span>
 		</button>
 	{/if}
-	<meter class="mt-12" id="volumeMeter" high={0.25} max={1} value={volume}></meter>
 	<VideoStream />
 </div>
 
@@ -293,4 +293,11 @@
             transform: none;
         }
     }
+	.gradient-heading {
+		@apply bg-clip-text text-transparent box-decoration-clone;
+		/* Direction */
+		@apply bg-gradient-to-br;
+		/* Color Stops */
+		@apply from-primary-500 via-tertiary-500 to-secondary-500;
+	}
 </style>
