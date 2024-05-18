@@ -1,20 +1,22 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-
-	let media: Blob[] = [];
+    import VideoStream from "$lib/components/VideoStream.svelte";
+    let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
-	let recording = false;
+    let recording = false;
 
 	const sendFile = async (file: File) => {
 		const formData = new FormData();
 		formData.append("file", file);
 		const response = await fetch("http://localhost:3000/upload", {
 			method: "POST",
-			body: formData
+			body: formData,
 		});
 		const data = await response.json();
 		console.log(data);
 	};
+
+    let volume: number = 0;
 
 	onMount(async () => {
 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -26,20 +28,54 @@
 			if (audio?.src) {
 				audio.src = window.URL.createObjectURL(blob);
 			}
-			sendFile(new File([blob], "audio.ogg"));
-		};
-	});
+            sendFile(new File([blob], "audio.ogg"));
+        };
+        const audioContext = new AudioContext();
+        const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
+        const analyserNode = audioContext.createAnalyser();
+        mediaStreamAudioSourceNode.connect(analyserNode);
+
+        const pcmData = new Float32Array(analyserNode.fftSize);
+        const onFrame = () => {
+            analyserNode.getFloatTimeDomainData(pcmData);
+            let sumSquares = 0.0;
+            for (const amplitude of pcmData) { sumSquares += amplitude*amplitude; }
+            volume = Math.sqrt(sumSquares / pcmData.length);
+            window.requestAnimationFrame(onFrame);
+        };
+        window.requestAnimationFrame(onFrame);
+    });
 	const startRecording = () => {
 		media = [];
 		mediaRecorder?.start();
-		recording = true;
+        recording = true;
 	};
 	const stopRecording = () => {
 		mediaRecorder?.stop();
-		recording = false;
+        recording = false;
 	};
 </script>
 
+
+<div class="p-12 flex flex-col items-center">
+	<h1 class="minecraft">test</h1>
+	<VideoStream/>
+	<div class="pt-12" />
+	{#if recording}
+		<button class="stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white" style="--stacks: 3;" on:click={startRecording}>
+			<span class="py=8" style="--index: 0;">Stop</span>
+			<span class="py-8" style="--index: 1;">Stop</span>
+			<span class="py-8" style="--index: 2;">Stop</span>
+		</button>
+	{:else}
+		<button class="stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white" style="--stacks: 3;" on:click={startRecording}>
+			<span class="py=8" style="--index: 0;">Record</span>
+			<span class="py-8" style="--index: 1;">Record</span>
+			<span class="py-8" style="--index: 2;">Record</span>
+		</button>
+	{/if}
+	<meter id="volumeMeter" high={0.25} max={1} value={volume}></meter>
+</div>
 
 <div class="p-12">
 	<br>
