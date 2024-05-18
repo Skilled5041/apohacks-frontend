@@ -60,13 +60,13 @@
 	<h1 class="minecraft">test</h1>
 	<div class="pt-12" />
 	{#if recording}
-		<button class="stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white" style="--stacks: 3;" on:click={startRecording}>
+		<button class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white" style="--stacks: 3;" on:click={stopRecording}>
 			<span class="py=8" style="--index: 0;">Stop</span>
 			<span class="py-8" style="--index: 1;">Stop</span>
 			<span class="py-8" style="--index: 2;">Stop</span>
 		</button>
 	{:else}
-		<button class="stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white" style="--stacks: 3;" on:click={startRecording}>
+		<button class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white" style="--stacks: 3;" on:click={startRecording}>
 			<span class="py=8" style="--index: 0;">Record</span>
 			<span class="py-8" style="--index: 1;">Record</span>
 			<span class="py-8" style="--index: 2;">Record</span>
@@ -92,6 +92,14 @@
         --color-yellow: #debf40;
         --color-foreground: var(--color-white);
         --font-name: Righteous;
+    }
+
+	.hover-effect {
+		transition: all 0.3s;
+    }
+
+	.hover-effect:hover {
+		transform: scale(1.05) rotate(2deg) perspective(100px) rotateX(2deg);
     }
 
     @font-face {
