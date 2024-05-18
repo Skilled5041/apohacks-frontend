@@ -57,6 +57,15 @@
 		mediaRecorder?.stop();
 		recording = false;
 	};
+
+	$: if (volume) {
+		const recordButton = document.getElementById("record-button");
+		if (recordButton) {
+			recordButton.style.transform = `rotate(${volume * 360}deg) perspective(100px) rotateX(${volume * 36}deg) rotateY(${volume * 36}deg)`;
+			recordButton.style.outlineWidth = `${volume * 1000}px`;
+		}
+	}
+
 </script>
 
 <div class="p-12 flex w-full justify-center">
@@ -74,21 +83,19 @@
 	<h1 class="text-6xl text-center gradient-heading font-extrabold">MOAN TO SPEECH</h1>
 </div>
 <div class="p-12 flex flex-col items-center">
-	<h1 class="minecraft">test</h1>
 	<div class="pt-12" />
 	{#if recording}
-		<div class="rounded-3xl" style="border-color:red; border-style:solid; border-radius: 1.5rem; margin-top: {20-volume*200}px; margin-bottom: {20-volume*200}px; border-width: {volume*200}px;">
-			<button
-				class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
-				style="--stacks: 3;" on:click={stopRecording}>
-				<span class="py=8" style="--index: 0;">Stop</span>
-				<span class="py-8" style="--index: 1;">Stop</span>
-				<span class="py-8" style="--index: 2;">Stop</span>
-			</button>
-		</div>
+		<button
+			id="record-button"
+			class="transition stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-red-600"
+			style="--stacks: 3;" on:click={stopRecording}>
+			<span class="py=8" style="--index: 0;">Stop</span>
+			<span class="py-8" style="--index: 1;">Stop</span>
+			<span class="py-8" style="--index: 2;">Stop</span>
+		</button>
 	{:else}
 		<button
-			class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-white"
+			class="hover-effect stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-white"
 			style="--stacks: 3; margin-top: 20px; margin-bottom:20px" on:click={startRecording}>
 			<span class="py=8" style="--index: 0;">Record</span>
 			<span class="py-8" style="--index: 1;">Record</span>
@@ -122,18 +129,22 @@
         transition: all 0.3s;
     }
 
+    .transition {
+        transition: all 0.3s;
+    }
+
     .hover-effect:hover {
         transform: scale(1.05) rotate(2deg) perspective(100px) rotateX(2deg);
     }
 
-    @font-face {
-        font-family: 'Minecraft';
-        src: url('/fonts/minecraft_font.ttf') format('truetype');
-    }
+    /*@font-face {*/
+    /*    font-family: 'Minecraft';*/
+    /*    src: url('/fonts/minecraft_font.ttf') format('truetype');*/
+    /*}*/
 
-    .minecraft {
-        font-family: "Minecraft", sans-serif;
-    }
+    /*.minecraft {*/
+    /*    font-family: "Minecraft", sans-serif;*/
+    /*}*/
 
     .c-rainbow {
         counter-reset: rainbow;
@@ -249,7 +260,7 @@
         --clip-top: calc(var(--stack-height) * var(--index));
         --clip-bottom: calc(var(--stack-height) * var(--inverse-index));
         clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
-        animation: stack 340ms cubic-bezier(.46, .29, 0, 1.24) 1 backwards calc(var(--index) * 120ms), glitch 2s ease infinite 2s alternate-reverse;
+        animation: stack 340ms cubic-bezier(.46, .29, 0, 1.24) 1 backwards calc(var(--index) * 120ms), glitch 2s ease infinite 1s alternate-reverse;
     }
 
     .stack span:nth-child(odd) {
@@ -293,11 +304,12 @@
             transform: none;
         }
     }
-	.gradient-heading {
-		@apply bg-clip-text text-transparent box-decoration-clone;
-		/* Direction */
-		@apply bg-gradient-to-br;
-		/* Color Stops */
-		@apply from-primary-500 via-tertiary-500 to-secondary-500;
-	}
+
+    .gradient-heading {
+        @apply bg-clip-text text-transparent box-decoration-clone;
+        /* Direction */
+        @apply bg-gradient-to-br;
+        /* Color Stops */
+        @apply from-primary-500 via-tertiary-500 to-secondary-500;
+    }
 </style>
