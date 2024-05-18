@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+
 	let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
 
 	const sendFile = async (file: File) => {
 		const formData = new FormData();
 		formData.append("file", file);
-		const response = await fetch("http://localhost:3000/upload", {
+		const response = await fetch("http://localhost:8000/uploadfile/", {
 			method: "POST",
-			body: formData,
+			body: formData
 		});
 		const data = await response.json();
 		console.log(data);
@@ -21,10 +22,10 @@
 		mediaRecorder.onstop = () => {
 			const audio = document.querySelector("audio");
 			const blob = new Blob(media, { type: "audio/ogg; codecs=opus" });
-			media = [];
 			if (audio?.src) {
 				audio.src = window.URL.createObjectURL(blob);
 			}
+			sendFile(new File([blob], "audio.ogg"));
 		};
 	});
 	const startRecording = () => {
@@ -36,18 +37,140 @@
 	};
 </script>
 
-<div class="text-center p-12">
-	<h1 class="text-8xl pb-12"><span class="gradient-heading">Moan To Speech</span> 🧟‍👺️</h1>
-	<button class="btn variant-filled" on:click={startRecording}>Record</button>
-	<button class="btn variant-filled" on:click={stopRecording}>Stop</button>
+<div class="p-12">
+	<br>
+	<br>
+	<br>
+	<br>
+	<ul class="c-rainbow">
+		<li class="c-rainbow__layer c-rainbow__layer--white">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--orange">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--red">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--violet">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--blue">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--green">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--yellow">MOAN TO SPEECH</li>
+	</ul>
+	<div class="pt-12">
+		<button class="btn variant-filled" on:click={startRecording}>Record</button>
+		<button class="btn variant-filled" on:click={stopRecording}>Stop</button>
+	</div>
 </div>
 
 <style>
-	.gradient-heading {
-		@apply bg-clip-text text-transparent box-decoration-clone;
-		/* Direction */
-		@apply bg-gradient-to-br;
-		/* Color Stops */
-		@apply from-primary-500 via-secondary-500 to-tertiary-500;
-	}
+    :root {
+        --color-background: #31037d;
+        --axis-x: 1px;
+        --axis-y: 1rem;
+        --delay: 10;
+        --color-black: #000;
+        --color-white: #fff;
+        --color-orange: #d49c3d;
+        --color-red: #d14b3d;
+        --color-violet: #cf52eb;
+        --color-blue: #44a3f7;
+        --color-green: #5acb3c;
+        --color-yellow: #debf40;
+        --color-foreground: var(--color-white);
+        --font-name: Righteous;
+    }
+
+    .c-rainbow {
+        counter-reset: rainbow;
+        position: relative;
+        display: block;
+        list-style: none;
+    }
+
+    .c-rainbow__layer {
+        position: absolute;
+        top: 0;
+        --text-color: var(--color-foreground);
+        counter-increment: rainbow;
+        font-size: 6rem;
+        color: var(--text-color);
+        text-shadow: -1px -1px 0 var(--color-black), 1px -1px 0 var(--color-black), -1px 1px 0 var(--color-black), 1px 1px 0 var(--color-black), 4px 4px 0 rgba(0, 0, 0, .2);
+        animation: rainbow 1.5s ease-in-out infinite;
+    }
+
+    .c-rainbow__layer:nth-child(1) {
+        animation-delay: calc(1 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 1);
+        z-index: -10;
+    }
+
+    .c-rainbow__layer:nth-child(2) {
+        animation-delay: calc(2 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 2);
+        z-index: -20;
+    }
+
+    .c-rainbow__layer:nth-child(3) {
+        animation-delay: calc(3 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 3);
+        z-index: -30;
+    }
+
+    .c-rainbow__layer:nth-child(4) {
+        animation-delay: calc(4 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 4);
+        z-index: -40;
+    }
+
+    .c-rainbow__layer:nth-child(5) {
+        animation-delay: calc(5 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 5);
+        z-index: -50;
+    }
+
+    .c-rainbow__layer:nth-child(6) {
+        animation-delay: calc(6 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 6);
+        z-index: -60;
+    }
+
+    .c-rainbow__layer:nth-child(7) {
+        animation-delay: calc(7 / var(--delay) * 1s);
+        left: calc(var(--axis-x) * 7);
+        z-index: -70;
+    }
+
+    .c-rainbow__layer--white {
+        --text-color: var(--color-white);
+    }
+
+    .c-rainbow__layer--orange {
+        --text-color: var(--color-orange);
+    }
+
+    .c-rainbow__layer--red {
+        --text-color: var(--color-red);
+    }
+
+    .c-rainbow__layer--violet {
+        --text-color: var(--color-violet);
+    }
+
+    .c-rainbow__layer--blue {
+        --text-color: var(--color-blue);
+    }
+
+    .c-rainbow__layer--green {
+        --text-color: var(--color-green);
+    }
+
+    .c-rainbow__layer--yellow {
+        --text-color: var(--color-yellow);
+    }
+
+    @keyframes rainbow {
+        0%, 100% {
+            transform: translatey(var(--axis-y)) translateX(-50%);
+            left: 50%;
+        }
+        50% {
+            transform: translatey(calc(var(--axis-y) * -1))  translateX(-50%);
+            left: 50%;
+        }
+    }
 </style>
