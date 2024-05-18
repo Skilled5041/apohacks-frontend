@@ -49,7 +49,6 @@
             canvasRef.width = width;
             canvasRef.height = height;
             context.drawImage(videoRef, 0, 0, width, height);
-            videoRef.classList.add('hidden');
 
             const base64Url = canvasRef.toDataURL("image/png");
             const request = async () => {
@@ -59,13 +58,11 @@
                     method: 'GET',
                     body: data
                 });
-                invalidateAll();
             };
             request();
         } else {
             clearphoto();
         }
-        close();
     }
     onMount(() => {
         getStream();

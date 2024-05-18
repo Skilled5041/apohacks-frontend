@@ -12,6 +12,8 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@iconify/svelte": "^4.0.2",
+		"@iconify/tailwind": "^1.1.1",
 		"@skeletonlabs/skeleton": "2.10.0",
 		"@skeletonlabs/tw-plugin": "0.4.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -41,6 +43,7 @@
 	"type": "module",
 	"dependencies": {
 		"@floating-ui/dom": "1.6.5",
+		"@iconify-json/ph": "^1.1.13",
 		"highlight.js": "11.9.0"
 	}
 }

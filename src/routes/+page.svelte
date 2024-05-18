@@ -2,6 +2,21 @@
 	import { onMount } from "svelte";
 	import VideoStream from "$lib/components/VideoStream.svelte";
 
+	const scrollIntoView = ({ target }: any) => {
+		const el = document.querySelector(target.getAttribute("href"));
+		if (!el) return;
+		el.scrollIntoView({
+			behavior: "smooth"
+		});
+	};
+
+	type Mode = "humanToZombie" | "zombieToHuman";
+	let currentMode: Mode = "humanToZombie";
+
+	const changeMode = () => {
+		currentMode = currentMode === "humanToZombie" ? "zombieToHuman" : "humanToZombie";
+	};
+
 	let camera: VideoStream;
 	let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
@@ -60,18 +75,18 @@
 		recording = false;
 	};
 
-    $: if (volume) {
-        const recordButton = document.getElementById("record-button");
-        if (recordButton) {
-            recordButton.style.transform = `rotate(${volume * 360}deg) perspective(100px) rotateX(${volume * 36}deg) rotateY(${volume * 36}deg)`;
-            recordButton.style.outlineWidth = `${volume * 1000}px`;
-        }
-    }
+	$: if (volume) {
+		const recordButton = document.getElementById("record-button");
+		if (recordButton) {
+			recordButton.style.transform = `rotate(${volume * 360}deg) perspective(100px) rotateX(${volume * 36}deg) rotateY(${volume * 36}deg)`;
+			recordButton.style.outlineWidth = `${volume * 1000}px`;
+		}
+	}
 
 </script>
 
-<div class="p-12 flex w-full justify-center">
-	<!--
+<div class="p-36" />
+<div class="w-full justify-center font-extrabold">
 	<ul class="c-rainbow">
 		<li class="c-rainbow__layer c-rainbow__layer--white">MOAN TO SPEECH</li>
 		<li class="c-rainbow__layer c-rainbow__layer--orange">MOAN TO SPEECH</li>
@@ -81,19 +96,49 @@
 		<li class="c-rainbow__layer c-rainbow__layer--green">MOAN TO SPEECH</li>
 		<li class="c-rainbow__layer c-rainbow__layer--yellow">MOAN TO SPEECH</li>
 	</ul>
-	-->
-	<h1 class="text-6xl text-center gradient-heading font-extrabold">MOAN TO SPEECH</h1>
 </div>
-<div class="p-12 flex flex-row items-center justify-between">
-	<div class="border-green-700 border-8">
-		<VideoStream bind:this={camera}/>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="flex justify-center pt-96">
+	<a class="btn variant-filled-tertiary" href="#down" on:click|preventDefault={scrollIntoView}>
+		<span class="icon-[ph--arrow-fat-down-fill]" style="width: 32px; height: 32px;"></span>
+	</a>
+</div>
+<div class="p-96" />
+<div class="py-12 px-64 flex flex-col items-center justify-between">
+	{#key currentMode}
+		<div class="flex flex-col">
+			<h1
+				id="down"
+				class:gradient-heading1={currentMode === "humanToZombie"}
+				class:gradient-heading2={currentMode === "zombieToHuman"}
+				class="text-6xl text-center gradient-heading1 font-extrabold pb-8">
+				{currentMode === "humanToZombie" ? "Human To Zombie" : "Zombie To Human"}
+			</h1>
+
+			<button class="btn variant-filled-tertiary mb-12 whitespace-break-spaces"
+					on:click={changeMode}>{currentMode === "humanToZombie" ? "Human To Zombie" : "Zombie To Human"}
+				<span
+					class="icon-[ph--swap]" style="width: 32px; height: 32px;"></span></button>
+		</div>
+	{/key}
+
+	<div class="border-green-700 border-8 mb-12">
+		<VideoStream bind:this={camera} />
 	</div>
 	<div class="flex justify-center w-[40%]">
 		{#if recording}
 			<button
-					id="record-button"
-					class="transition stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-red-600"
-					style="--stacks: 3;" on:click={stopRecording}>
+				id="record-button"
+				class="transition stack w-80 bg-black text-white h-24 rounded-3xl inline-flex justify-center items-center outline outline-2 outline-red-600"
+				style="--stacks: 3;" on:click={stopRecording}>
 				<span class="py=8" style="--index: 0;">Stop</span>
 				<span class="py-8" style="--index: 1;">Stop</span>
 				<span class="py-8" style="--index: 2;">Stop</span>
@@ -110,7 +155,15 @@
 	</div>
 </div>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Danfo&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
 <style>
+    * {
+        font-family: Inter, sans-serif;
+    }
+
     :root {
         --background: #060608;
         --color: #FAFAFA;
@@ -133,21 +186,14 @@
     .hover-effect {
         transition: all 0.3s;
     }
+
     .transition {
         transition: all 0.3s;
     }
+
     .hover-effect:hover {
         transform: scale(1.05) rotate(2deg) perspective(100px) rotateX(2deg);
     }
-
-    /*@font-face {*/
-    /*    font-family: 'Minecraft';*/
-    /*    src: url('/fonts/minecraft_font.ttf') format('truetype');*/
-    /*}*/
-
-    /*.minecraft {*/
-    /*    font-family: "Minecraft", sans-serif;*/
-    /*}*/
 
     .c-rainbow {
         counter-reset: rainbow;
@@ -307,11 +353,20 @@
             transform: none;
         }
     }
-	.gradient-heading {
-		@apply bg-clip-text text-transparent box-decoration-clone;
-		/* Direction */
-		@apply bg-gradient-to-br;
-		/* Color Stops */
-		@apply from-primary-500 via-tertiary-500 to-secondary-500;
-	}
+
+    .gradient-heading1 {
+        @apply bg-clip-text text-transparent box-decoration-clone;
+        /* Direction */
+        @apply bg-gradient-to-br;
+        /* Color Stops */
+        @apply from-primary-500 via-tertiary-500 to-secondary-500;
+    }
+
+    .gradient-heading2 {
+        @apply bg-clip-text text-transparent box-decoration-clone;
+        /* Direction */
+        @apply bg-gradient-to-br;
+        /* Color Stops */
+        @apply from-secondary-700 via-tertiary-500 to-primary-500;
+    }
 </style>
