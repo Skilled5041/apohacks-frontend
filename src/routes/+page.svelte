@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import VideoStream from "$lib/components/VideoStream.svelte";
+	import zombieGif from "$lib/gifs/zombie.gif";
+	import j1 from "$lib/images/j1.png";
+	import j2 from "$lib/images/j2.png";
+	import j3 from "$lib/images/j3.png";
+	import j4 from "$lib/images/j4.png";
 
 	const scrollIntoView = ({ target }: any) => {
 		const el = document.querySelector(target.getAttribute("href"));
@@ -40,7 +45,7 @@
 		mediaRecorder = new MediaRecorder(stream);
 		mediaRecorder.ondataavailable = (e) => media.push(e.data);
 		mediaRecorder.onstop = () => {
-			console.log("stopped")
+			console.log("stopped");
 			const audio = document.querySelector("audio");
 			const blob = new Blob(media, { type: "audio/ogg; codecs=opus" });
 			if (audio?.src) {
@@ -83,7 +88,6 @@
 			recordButton.style.outlineWidth = `${volume * 1000}px`;
 		}
 	}
-
 </script>
 
 <div class="p-36" />
@@ -107,13 +111,16 @@
 <br>
 <br>
 <br>
-<div class="flex justify-center pt-96">
+<div class="flex justify-center">
+	<img src={zombieGif} alt="walking zombie">
+</div>
+<div class="flex justify-center pt-24">
 	<a class="btn variant-filled-tertiary" href="#down" on:click|preventDefault={scrollIntoView}>
-		<span class="icon-[ph--arrow-fat-down-fill]" style="width: 32px; height: 32px;"></span>
+		<span class="icon-[ph--arrow-fat-down-fill]" style="width: 32px; height: 32px;" href="#down" on:click|preventDefault={scrollIntoView}/>
 	</a>
 </div>
 <div class="p-96" />
-<div class="py-12 px-64 flex flex-col items-center justify-between">
+<div class="py-12 flex flex-col items-center justify-between">
 	{#key currentMode}
 		<div class="flex flex-col">
 			<h1
