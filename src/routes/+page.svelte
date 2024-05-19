@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import VideoStream from "$lib/components/VideoStream.svelte";
+	import zombieGif from "$lib/gifs/zombie.gif";
 
 	const scrollIntoView = ({ target }: any) => {
 		const el = document.querySelector(target.getAttribute("href"));
@@ -108,6 +109,9 @@
 		<li class="c-rainbow__layer c-rainbow__layer--yellow">MOAN TO SPEECH</li>
 	</ul>
 </div>
+<div class="flex justify-center pt-36">
+	<img src={zombieGif} alt="walking zombie" draggable="false">
+</div>
 <br>
 <br>
 <br>
@@ -117,7 +121,7 @@
 <br>
 <br>
 <br>
-<div class="flex justify-center pt-96">
+<div class="flex justify-center pt-42">
 	<a class="btn variant-filled-tertiary" href="#down" on:click|preventDefault={scrollIntoView}>
 		<span class="icon-[ph--arrow-fat-down-fill]" style="width: 32px; height: 32px;"></span>
 	</a>
