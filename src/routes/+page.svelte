@@ -17,6 +17,8 @@
 	type Mode = "humanToZombie" | "zombieToHuman";
 	let currentMode: Mode = "humanToZombie";
 
+	const apiurl = "https://10.93.93.133:8000";
+
 	const changeMode = () => {
 		currentMode = currentMode === "humanToZombie" ? "zombieToHuman" : "humanToZombie";
 	};
@@ -26,17 +28,8 @@
 	let mediaRecorder: MediaRecorder | null = null;
 	let recording = false;
 
-	const sendFile = async (file: File) => {
-		const formData = new FormData();
-		formData.append("file", file);
-		const response = await fetch("http://localhost:8000/upload_audio/", {
-			method: "POST",
-			body: formData
-		});
-		const data = await response.json();
-		console.log(data);
-	};
-
+	let recognition;
+	let transcript: string = "";
 	let volume: number = 0;
 
 	onMount(async () => {
@@ -60,15 +53,39 @@
 			window.requestAnimationFrame(onFrame);
 		};
 		window.requestAnimationFrame(onFrame);
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		recognition = new SpeechRecognition();
+		recognition.continuous = true;
+		recognition.lang="en-US";
+		recognition.interimResults = true;
+		recognition.onresult = async (event) => {
+			const current = event.resultIndex;
+// Get a transcript of what was said.
+			transcript = event.results[current][0].transcript;
+			if(currentMode === "humanToZombie"){
+				await fetch(`http://localhost:8000/humanToZombie/${transcript.trim().replaceAll(" ", "%20")}`, {
+					method: "POST"
+				});
+			} else {
+				await fetch(`http://localhost:8000/zombie_audio/${transcript.trim().replaceAll(" ", "%20")}`, {
+					method: "POST"
+				});
+			}
+		};
+		recognition.onstart = (event) => {
+			transcript = "";
+			console.log("start");
+		};
 	});
 	const startRecording = () => {
 		media = [];
 		mediaRecorder?.start();
-		camera.takepicture();
+		recognition.start();
 		recording = true;
 	};
 	const stopRecording = () => {
 		mediaRecorder?.stop();
+		recognition.stop();
 		recording = false;
 	};
 
