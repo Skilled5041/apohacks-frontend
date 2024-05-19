@@ -127,7 +127,7 @@
 	</a>
 </div>
 <div class="p-96" />
-<div class="py-12 px-64 flex flex-col items-center justify-between">
+<div class="py-12 flex flex-col items-center justify-between">
 	{#key currentMode}
 		<div class="flex flex-col">
 			<h1
