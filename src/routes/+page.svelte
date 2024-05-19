@@ -17,7 +17,6 @@
 		currentMode = currentMode === "humanToZombie" ? "zombieToHuman" : "humanToZombie";
 	};
 
-	let camera: VideoStream;
 	let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
 	let recording = false;
@@ -25,7 +24,7 @@
 	const sendFile = async (file: File) => {
 		const formData = new FormData();
 		formData.append("file", file);
-		const response = await fetch("http://localhost:8000/upload_audio/", {
+		const response = await fetch("http://localhost:8000/zombie_audio/", {
 			method: "POST",
 			body: formData
 		});
@@ -34,19 +33,13 @@
 	};
 
 	let volume: number = 0;
+	let recognition;
+	let transcript: string = "";
 
 	onMount(async () => {
 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 		mediaRecorder = new MediaRecorder(stream);
 		mediaRecorder.ondataavailable = (e) => media.push(e.data);
-		mediaRecorder.onstop = () => {
-			const audio = document.querySelector("audio");
-			const blob = new Blob(media, { type: "audio/ogg; codecs=opus" });
-			if (audio?.src) {
-				audio.src = window.URL.createObjectURL(blob);
-			}
-			sendFile(new File([blob], "audio.ogg"));
-		};
 		const audioContext = new AudioContext();
 		const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
 		const analyserNode = audioContext.createAnalyser();
@@ -63,15 +56,42 @@
 			window.requestAnimationFrame(onFrame);
 		};
 		window.requestAnimationFrame(onFrame);
+
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		recognition = new SpeechRecognition();
+		recognition.continuous = true;
+		recognition.lang="en-US";
+		recognition.interimResults = true;
+		recognition.onresult = async (event) => {
+			const current = event.resultIndex;
+// Get a transcript of what was said.
+			transcript = event.results[current][0].transcript;
+			if(currentMode === "humanToZombie"){
+				await fetch(`http://localhost:8000/humanToZombie/${transcript.trim().replaceAll(" ", "%20")}`, {
+					method: "POST"
+				});
+			} else {
+				await fetch(`http://localhost:8000/zombie_audio/${transcript.trim().replaceAll(" ", "%20")}`, {
+					method: "POST"
+				});
+			}
+		};
+		recognition.onstart = (event) => {
+			transcript = "";
+			console.log("start");
+		};
+
 	});
 	const startRecording = () => {
 		media = [];
 		mediaRecorder?.start();
-		camera.takepicture();
+		recognition.start();
 		recording = true;
 	};
-	const stopRecording = () => {
+	const stopRecording = async () =>
+	{
 		mediaRecorder?.stop();
+		recognition.stop();
 		recording = false;
 	};
 
@@ -131,7 +151,7 @@
 	{/key}
 
 	<div class="border-green-700 border-8 mb-12">
-		<VideoStream bind:this={camera} />
+		<VideoStream />
 	</div>
 	<div class="flex justify-center w-[40%]">
 		{#if recording}
@@ -153,6 +173,7 @@
 			</button>
 		{/if}
 	</div>
+	<p>{transcript}</p>
 </div>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">

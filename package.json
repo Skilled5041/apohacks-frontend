@@ -44,6 +44,7 @@
 	"dependencies": {
 		"@floating-ui/dom": "1.6.5",
 		"@iconify-json/ph": "^1.1.13",
+		"@picovoice/web-voice-processor": "^4.0.9",
 		"highlight.js": "11.9.0"
 	}
 }
