@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import VideoStream from "$lib/components/VideoStream.svelte";
-	import zombieGif from "$lib/gifs/zombie.gif";
-	import j1 from "$lib/images/j1.png";
-	import j2 from "$lib/images/j2.png";
-	import j3 from "$lib/images/j3.png";
-	import j4 from "$lib/images/j4.png";
+
 	const scrollIntoView = ({ target }: any) => {
 		const el = document.querySelector(target.getAttribute("href"));
 		if (!el) return;
@@ -17,26 +13,25 @@
 	type Mode = "humanToZombie" | "zombieToHuman";
 	let currentMode: Mode = "humanToZombie";
 
-	const apiurl = "https://10.93.93.133:8000";
+	const apiurl="";
 
 	const changeMode = () => {
 		currentMode = currentMode === "humanToZombie" ? "zombieToHuman" : "humanToZombie";
 	};
 
-	let camera: VideoStream;
 	let media: Blob[] = [];
 	let mediaRecorder: MediaRecorder | null = null;
 	let recording = false;
 
+
+	let volume: number = 0;
 	let recognition;
 	let transcript: string = "";
-	let volume: number = 0;
 
 	onMount(async () => {
 		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 		mediaRecorder = new MediaRecorder(stream);
 		mediaRecorder.ondataavailable = (e) => media.push(e.data);
-
 		const audioContext = new AudioContext();
 		const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
 		const analyserNode = audioContext.createAnalyser();
@@ -53,14 +48,14 @@
 			window.requestAnimationFrame(onFrame);
 		};
 		window.requestAnimationFrame(onFrame);
+
 		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 		recognition = new SpeechRecognition();
 		recognition.continuous = true;
 		recognition.lang="en-US";
-		recognition.interimResults = true;
 		recognition.onresult = async (event) => {
 			const current = event.resultIndex;
-// Get a transcript of what was said.
+			// Get a transcript of what was said.
 			transcript = event.results[current][0].transcript;
 			if(currentMode === "humanToZombie"){
 				await fetch(`http://localhost:8000/humanToZombie/${transcript.trim().replaceAll(" ", "%20")}`, {
@@ -76,6 +71,7 @@
 			transcript = "";
 			console.log("start");
 		};
+
 	});
 	const startRecording = () => {
 		media = [];
@@ -83,7 +79,8 @@
 		recognition.start();
 		recording = true;
 	};
-	const stopRecording = () => {
+	const stopRecording = async () =>
+	{
 		mediaRecorder?.stop();
 		recognition.stop();
 		recording = false;
@@ -99,16 +96,34 @@
 
 </script>
 
-<div class="flex justify-center">
-	<img src={zombieGif} alt="walking zombie">
+<div class="p-36" />
+<div class="w-full justify-center font-extrabold">
+	<ul class="c-rainbow">
+		<li class="c-rainbow__layer c-rainbow__layer--white">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--orange">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--red">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--violet">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--blue">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--green">MOAN TO SPEECH</li>
+		<li class="c-rainbow__layer c-rainbow__layer--yellow">MOAN TO SPEECH</li>
+	</ul>
 </div>
-<div class="flex justify-center pt-24">
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="flex justify-center pt-96">
 	<a class="btn variant-filled-tertiary" href="#down" on:click|preventDefault={scrollIntoView}>
-		<span class="icon-[ph--arrow-fat-down-fill]" style="width: 32px; height: 32px;" href="#down" on:click|preventDefault={scrollIntoView}/>
+		<span class="icon-[ph--arrow-fat-down-fill]" style="width: 32px; height: 32px;"></span>
 	</a>
 </div>
 <div class="p-96" />
-<div class="py-12 flex flex-col items-center justify-between">
+<div class="py-12 px-64 flex flex-col items-center justify-between">
 	{#key currentMode}
 		<div class="flex flex-col">
 			<h1
@@ -127,7 +142,7 @@
 	{/key}
 
 	<div class="border-green-700 border-8 mb-12">
-		<VideoStream bind:this={camera} />
+		<VideoStream />
 	</div>
 	<div class="flex justify-center w-[40%]">
 		{#if recording}
@@ -149,6 +164,7 @@
 			</button>
 		{/if}
 	</div>
+	<p>{transcript}</p>
 </div>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
