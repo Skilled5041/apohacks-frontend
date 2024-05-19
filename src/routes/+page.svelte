@@ -40,6 +40,7 @@
 		mediaRecorder = new MediaRecorder(stream);
 		mediaRecorder.ondataavailable = (e) => media.push(e.data);
 		mediaRecorder.onstop = () => {
+			console.log("stopped")
 			const audio = document.querySelector("audio");
 			const blob = new Blob(media, { type: "audio/ogg; codecs=opus" });
 			if (audio?.src) {
