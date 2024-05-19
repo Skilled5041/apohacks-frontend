@@ -14,7 +14,7 @@
 	type Mode = "humanToZombie" | "zombieToHuman";
 	let currentMode: Mode = "humanToZombie";
 
-	const apiurl="";
+	const apiurl="http://localhost:8000";
 
 	const changeMode = () => {
 		currentMode = currentMode === "humanToZombie" ? "zombieToHuman" : "humanToZombie";
@@ -59,11 +59,11 @@
 			// Get a transcript of what was said.
 			transcript = event.results[current][0].transcript;
 			if(currentMode === "humanToZombie"){
-				await fetch(`http://localhost:8000/humanToZombie/${transcript.trim().replaceAll(" ", "%20")}`, {
+				await fetch(apiurl+`/humanToZombie/${transcript.trim().replaceAll(" ", "%20")}`, {
 					method: "POST"
 				});
 			} else {
-				await fetch(`http://localhost:8000/zombie_audio/${transcript.trim().replaceAll(" ", "%20")}`, {
+				await fetch(apiurl+`/zombie_audio/${transcript.trim().replaceAll(" ", "%20")}`, {
 					method: "POST"
 				});
 			}
